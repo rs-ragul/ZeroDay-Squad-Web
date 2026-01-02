@@ -1,24 +1,58 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- ================= BASIC ================= -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- App Title -->
-    <title>ZeroDay Squad</title>
+    <title>ZeroDay Squad | Cybersecurity Projects & Research</title>
 
-    <!-- Basic SEO -->
     <meta
       name="description"
-      content="ZeroDay Squad — Cybersecurity projects, achievements, and research."
+      content="ZeroDay Squad is a cybersecurity collective showcasing projects, achievements, research, and elite members in ethical hacking and security."
     />
 
-    <!-- Favicon -->
-    <link rel="icon" href="/zerodaysquad.ico" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="ZeroDay Squad" />
+
+    <!-- ================= FAVICON ================= -->
+    <link rel="icon" type="image/x-icon" href="/zerodaysquad.ico" />
+
+    <!-- ================= OPEN GRAPH (GOOGLE / FB / LINKEDIN) ================= -->
+    <meta property="og:title" content="ZeroDay Squad" />
+    <meta
+      property="og:description"
+      content="Cybersecurity projects, achievements, and research by ZeroDay Squad."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://zero-day-squad-web.vercel.app/" />
+    <meta property="og:image" content="/zerodaysquad.ico" />
+
+    <!-- ================= TWITTER ================= -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ZeroDay Squad" />
+    <meta
+      name="twitter:description"
+      content="Cybersecurity projects, achievements, and research."
+    />
+
+    <!-- ================= PERFORMANCE ================= -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- ================= SECURITY ================= -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
   </head>
 
   <body>
+    <noscript>
+      ZeroDay Squad requires JavaScript to run properly.
+    </noscript>
+
     <div id="root"></div>
+
+    <!-- Vite entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
