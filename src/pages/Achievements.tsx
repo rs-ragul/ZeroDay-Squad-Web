@@ -99,7 +99,7 @@ export default function Achievements() {
                           <h3 className="font-display font-semibold text-foreground mb-2 text-sm">
                             {achievement.title}
                           </h3>
-                          <p className="text-muted-foreground text-xs leading-relaxed">
+                          <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
                             {achievement.description}
                           </p>
                           {achievement.is_team_achievement ? (
@@ -163,7 +163,7 @@ export default function Achievements() {
                               <span className="text-secondary text-lg">★</span>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-sm mb-2">
+                          <p className="text-muted-foreground text-sm mb-2 line-clamp-2">
                             {achievement.description}
                           </p>
                           {achievement.is_team_achievement ? (
