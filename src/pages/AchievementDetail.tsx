@@ -133,44 +133,46 @@ export default function AchievementDetail() {
 
           {/* Achievement Card */}
           <CyberCard variant="glow" className="p-8">
-            {/* Icon and Title */}
-            <div className="flex items-start gap-6 mb-8">
-              <div
-                className={`w-20 h-20 flex items-center justify-center rounded-lg ${colors.bg} ${colors.border} border-2 shrink-0`}
-              >
-                <IconComponent className={`w-10 h-10 ${colors.text}`} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                    {achievement.title}
-                  </h1>
-                  {achievement.is_highlighted && (
-                    <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-                  )}
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+              <div className="flex items-start gap-4">
+                <div
+                  className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-lg ${colors.bg} ${colors.border} border-2 shrink-0`}
+                >
+                  <IconComponent className={`w-8 h-8 sm:w-10 sm:h-10 ${colors.text}`} />
                 </div>
-                <div className="flex items-center gap-4">
-                  <Badge
-                    variant="outline"
-                    className={`${colors.text} ${colors.border} uppercase`}
-                  >
-                    {achievement.achievement_type}
-                  </Badge>
-                  {achievement.achievement_date && (
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm font-mono">
-                        {new Date(achievement.achievement_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )}
-                      </span>
-                    </div>
-                  )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                      {achievement.title}
+                    </h1>
+                    {achievement.is_highlighted && (
+                      <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-4">
+                    <Badge
+                      variant="outline"
+                      className={`${colors.text} ${colors.border} uppercase`}
+                    >
+                      {achievement.achievement_type}
+                    </Badge>
+                    {achievement.achievement_date && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-sm font-mono">
+                          {new Date(achievement.achievement_date).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
