@@ -66,7 +66,7 @@ export default function Achievements() {
               <span className="text-secondary">#</span> Achievements
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our proudest moments in cybersecurity competitions, bug bounties, and research
+              Our proudest cybersecurity moments — plus CTFs, hackathons, events, and milestones
             </p>
           </div>
 

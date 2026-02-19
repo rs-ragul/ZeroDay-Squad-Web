@@ -10,13 +10,10 @@ import {
   Shield,
   Terminal,
   Code,
-  Lock,
   Users,
   Trophy,
   ChevronRight,
   Zap,
-  Eye,
-  Bug,
 } from "lucide-react";
 
 interface StatDisplay {
@@ -27,24 +24,24 @@ interface StatDisplay {
 
 const features = [
   {
-    icon: Bug,
-    title: "Vulnerability Research",
-    description: "Discovering and responsibly disclosing security flaws",
-  },
-  {
-    icon: Lock,
-    title: "Penetration Testing",
-    description: "Simulating attacks to strengthen defenses",
+    icon: Shield,
+    title: "Cybersecurity Core",
+    description: "Offense, defense, and secure engineering at our core",
   },
   {
     icon: Code,
-    title: "Exploit Development",
-    description: "Creating proof-of-concept exploits for research",
+    title: "Projects & Tools",
+    description: "Showcasing builds, demos, and open-source work",
   },
   {
-    icon: Eye,
-    title: "Threat Intelligence",
-    description: "Monitoring and analyzing emerging cyber threats",
+    icon: Trophy,
+    title: "CTFs & Hackathons",
+    description: "Competitive events, problem-solving, and wins",
+  },
+  {
+    icon: Users,
+    title: "Events & Community",
+    description: "Workshops, meetups, and team collaborations",
   },
 ];
 
@@ -99,7 +96,7 @@ export default function Index() {
           {/* Subtitle with typewriter effect */}
           <div className="text-xl md:text-2xl text-muted-foreground mb-8 h-8">
             <TypewriterText
-              text="> Built by curiosity. Driven by security."
+              text="> Built by curiosity. Driven by cybersecurity challenges."
               speed={40}
               delay={800}
             />
@@ -160,11 +157,11 @@ export default function Index() {
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
               <span className="text-primary">&lt;</span>
-              Our Expertise
+              Team Portfolio
               <span className="text-primary">/&gt;</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Elite cybersecurity operations spanning multiple domains of digital security
+              Cybersecurity-first, with projects, events, and competition highlights
             </p>
           </div>
 
@@ -240,8 +237,7 @@ export default function Index() {
               Explore Our Work
             </h2>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Discover our achievements in cybersecurity research and see the projects
-              that are shaping the future of digital security.
+              Discover our cybersecurity achievements, CTFs, hackathons, and projects.
             </p>
             <div className="flex justify-center">
               <Link to="/achievements" className="w-full sm:w-auto">

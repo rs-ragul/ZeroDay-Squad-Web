@@ -44,7 +44,7 @@ export default function Projects() {
               <span className="text-primary">/&gt;</span>
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our collection of security tools, research projects, and open-source contributions
+              Cybersecurity-first projects, tools, and research — with room for hackathons and community builds
             </p>
           </div>
 
