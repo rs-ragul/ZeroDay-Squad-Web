@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfiles } from "@/hooks/useProfiles";
+import { useProfilesWithRoles, ProfileWithRole } from "@/hooks/useProfiles";
 import {
   Dialog,
   DialogContent,
@@ -38,10 +38,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Plus, Trash2 } from "lucide-react";
+import { Users, Plus, Trash2, Edit } from "lucide-react";
 
 export function AdminMembersPanel() {
-  const { data: profiles, isLoading, refetch } = useProfiles();
+  const { data: profiles, isLoading, refetch } = useProfilesWithRoles();
   const { toast } = useToast();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
@@ -50,7 +50,31 @@ export function AdminMembersPanel() {
     email: "",
     password: "",
     role: "member" as "admin" | "member",
+    department: "",
+    team_role: "",
   });
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<ProfileWithRole | null>(null);
+  const [editData, setEditData] = useState({
+    role: "member" as "admin" | "member",
+    department: "",
+    team_role: "",
+  });
+
+  const setUserRole = async (userId: string, role: "admin" | "member") => {
+    const { error: deleteError } = await supabase
+      .from("user_roles")
+      .delete()
+      .eq("user_id", userId);
+
+    if (deleteError) throw deleteError;
+
+    const { error: insertError } = await supabase
+      .from("user_roles")
+      .insert({ user_id: userId, role });
+
+    if (insertError) throw insertError;
+  };
 
   const handleAddMember = async () => {
     if (!newMember.email || !newMember.password) {
@@ -78,14 +102,18 @@ export function AdminMembersPanel() {
 
       if (error) throw error;
 
-      // If admin role, update user_roles
-      if (data.user && newMember.role === "admin") {
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .update({ role: "admin" })
+      if (data.user) {
+        await setUserRole(data.user.id, newMember.role);
+
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({
+            department: newMember.department || null,
+            team_role: newMember.team_role || null,
+          })
           .eq("user_id", data.user.id);
 
-        if (roleError) throw roleError;
+        if (profileError) throw profileError;
       }
 
       toast({
@@ -93,8 +121,57 @@ export function AdminMembersPanel() {
         description: `${newMember.email} has been added as ${newMember.role}`,
       });
 
-      setNewMember({ email: "", password: "", role: "member" });
+      setNewMember({ email: "", password: "", role: "member", department: "", team_role: "" });
       setIsAddOpen(false);
+      refetch();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading2(false);
+    }
+  };
+
+  const handleEditMember = (member: ProfileWithRole) => {
+    setEditTarget(member);
+    setEditData({
+      role: member.role || "member",
+      department: member.department || "",
+      team_role: member.team_role || "",
+    });
+    setIsEditOpen(true);
+  };
+
+  const handleUpdateMember = async () => {
+    if (!editTarget) return;
+
+    setIsLoading2(true);
+    try {
+      const originalRole = editTarget.role || "member";
+      if (editData.role !== originalRole) {
+        await setUserRole(editTarget.user_id, editData.role);
+      }
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          department: editData.department || null,
+          team_role: editData.team_role || null,
+        })
+        .eq("id", editTarget.id);
+
+      if (profileError) throw profileError;
+
+      toast({
+        title: "Member Updated",
+        description: `@${editTarget.username || "member"} updated successfully.`,
+      });
+
+      setIsEditOpen(false);
+      setEditTarget(null);
       refetch();
     } catch (error: any) {
       toast({
@@ -209,6 +286,28 @@ export function AdminMembersPanel() {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label htmlFor="department">Department</Label>
+                <Input
+                  id="department"
+                  value={newMember.department}
+                  onChange={(e) =>
+                    setNewMember({ ...newMember, department: e.target.value })
+                  }
+                  placeholder="CSE(Cyber Security)"
+                />
+              </div>
+              <div>
+                <Label htmlFor="team_role">Team Role</Label>
+                <Input
+                  id="team_role"
+                  value={newMember.team_role}
+                  onChange={(e) =>
+                    setNewMember({ ...newMember, team_role: e.target.value })
+                  }
+                  placeholder="Technical Support"
+                />
+              </div>
               <Button
                 variant="cyber"
                 className="w-full"
@@ -249,6 +348,14 @@ export function AdminMembersPanel() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => handleEditMember(profile)}
+                      disabled={isLoading2}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setDeleteTarget({ userId: profile.user_id, username: profile.username || '' })}
                       disabled={isLoading2}
                     >
@@ -268,6 +375,75 @@ export function AdminMembersPanel() {
           </Table>
         </div>
       )}
+
+      <Dialog
+        open={isEditOpen}
+        onOpenChange={(open) => {
+          setIsEditOpen(open);
+          if (!open) setEditTarget(null);
+        }}
+      >
+        <DialogContent className="bg-card border-primary/30">
+          <DialogHeader>
+            <DialogTitle className="font-display">Edit Member</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="text-sm text-muted-foreground">
+              Editing{" "}
+              <span className="font-mono text-primary">
+                @{editTarget?.username || "member"}
+              </span>
+            </div>
+            <div>
+              <Label htmlFor="edit-role">Access Role</Label>
+              <Select
+                value={editData.role}
+                onValueChange={(value: "admin" | "member") =>
+                  setEditData({ ...editData, role: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="member">Member</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="edit-department">Department</Label>
+              <Input
+                id="edit-department"
+                value={editData.department}
+                onChange={(e) =>
+                  setEditData({ ...editData, department: e.target.value })
+                }
+                placeholder="CSE(Cyber Security)"
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-team-role">Team Role</Label>
+              <Input
+                id="edit-team-role"
+                value={editData.team_role}
+                onChange={(e) =>
+                  setEditData({ ...editData, team_role: e.target.value })
+                }
+                placeholder="Technical Support"
+              />
+            </div>
+            <Button
+              variant="cyber"
+              className="w-full"
+              onClick={handleUpdateMember}
+              disabled={isLoading2}
+            >
+              {isLoading2 ? "Updating..." : "Update Member"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent className="bg-card border-destructive/30">

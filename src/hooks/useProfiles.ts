@@ -10,7 +10,7 @@ export function useProfiles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,created_at,updated_at")
+        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role,created_at,updated_at")
         .order("created_at", { ascending: false });
       
       if (error) throw error;
@@ -36,7 +36,7 @@ export function useProfilesWithRoles() {
       console.warn("get_profiles_with_roles RPC failed, falling back to profiles table:", error);
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
-        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url")
+        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role,created_at,updated_at")
         .order("created_at", { ascending: false });
       
       if (profilesError) throw profilesError;
@@ -57,7 +57,7 @@ export function useProfile(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url")
+        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role")
         .eq("id", id)
         .maybeSingle();
       
@@ -75,7 +75,7 @@ export function useProfileByUserId(userId: string | undefined) {
       if (!userId) return null;
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url")
+        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role")
         .eq("user_id", userId)
         .maybeSingle();
       

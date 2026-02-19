@@ -65,6 +65,26 @@ export default function MemberProfile() {
                   {profile.full_name || profile.username || "Unknown"}
                 </h1>
                 <p className="text-primary font-mono mb-4">@{profile.username}</p>
+                {(profile.team_role || profile.department) && (
+                  <div className="flex flex-col gap-2 mb-4 items-center md:items-start">
+                    {profile.team_role && (
+                      <Badge
+                        variant="outline"
+                        className="border-destructive/60 text-destructive bg-destructive/10 font-mono text-xs"
+                      >
+                        {profile.team_role}
+                      </Badge>
+                    )}
+                    {profile.department && (
+                      <Badge
+                        variant="outline"
+                        className="border-primary/40 text-primary font-mono text-xs"
+                      >
+                        Department of {profile.department}
+                      </Badge>
+                    )}
+                  </div>
+                )}
                 {profile.bio && <p className="text-muted-foreground mb-4">{profile.bio}</p>}
                 {profile.skills && profile.skills.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4 justify-center md:justify-start">

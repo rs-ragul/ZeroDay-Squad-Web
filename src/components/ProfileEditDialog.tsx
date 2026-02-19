@@ -32,6 +32,7 @@ interface Profile {
   linkedin_url: string | null;
   twitter_url: string | null;
   website_url: string | null;
+  department: string | null;
 }
 
 interface ProfileEditDialogProps {
@@ -67,6 +68,7 @@ export function ProfileEditDialog({
     linkedin_url: "",
     twitter_url: "",
     website_url: "",
+    department: "",
   });
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export function ProfileEditDialog({
     setLoading(true);
     const { data, error } = await supabase
       .from("profiles")
-      .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,twitter_url")
+      .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,twitter_url,department")
       .eq("user_id", userId)
       .single();
 
@@ -95,6 +97,7 @@ export function ProfileEditDialog({
         linkedin_url: data.linkedin_url || "",
         twitter_url: data.twitter_url || "",
         website_url: data.website_url || "",
+        department: data.department || "",
       });
     }
     setLoading(false);
@@ -119,6 +122,7 @@ export function ProfileEditDialog({
           linkedin_url: formData.linkedin_url || null,
           twitter_url: formData.twitter_url || null,
           website_url: formData.website_url || null,
+          department: formData.department || null,
         })
         .eq("user_id", userId);
 
@@ -233,6 +237,17 @@ export function ProfileEditDialog({
                   placeholder="johndoe"
                 />
               </div>
+            </div>
+
+            <div>
+              <Label>Department</Label>
+              <Input
+                value={formData.department}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
+                placeholder="CSE(Cyber Security)"
+              />
             </div>
 
             <div>

@@ -71,7 +71,15 @@ export default function Members() {
             </div>
           ) : profiles && profiles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {profiles.map((member, index) => {
+              {[...profiles]
+                .sort((a, b) => {
+                  if (a.role === "admin" && b.role !== "admin") return -1;
+                  if (a.role !== "admin" && b.role === "admin") return 1;
+                  const aName = a.full_name || a.username || "";
+                  const bName = b.full_name || b.username || "";
+                  return aName.localeCompare(bName);
+                })
+                .map((member, index) => {
                 // Get the role directly from the member object
                 const memberRole = member.role;
                 const colors = levelColors[memberRole] || levelColors.member;
@@ -108,29 +116,49 @@ export default function Members() {
                         </div>
                       </div>
 
-                      {/* Handle */}
-                      <h3 className="font-mono text-lg text-primary cyber-text-glow mb-1">
-                        @{member.username || "unknown"}
+                      {/* Name */}
+                      <h3 className="font-display text-lg text-primary cyber-text-glow mb-2">
+                        {member.full_name || member.username || "Unknown"}
                       </h3>
 
-                      {/* Name */}
-                      <p className="font-display text-foreground font-semibold mb-2">
-                        {member.full_name || "—"}
-                      </p>
+                      {/* Team Role / Department */}
+                      {(member.team_role || member.department) && (
+                        <div className="flex flex-col items-center gap-1 mb-2">
+                          {member.team_role && (
+                            <Badge
+                              variant="outline"
+                              className="border-destructive/60 text-destructive bg-destructive/10 font-mono text-xs"
+                            >
+                              {member.team_role}
+                            </Badge>
+                          )}
+                          {member.department && (
+                            <Badge
+                              variant="outline"
+                              className="border-primary/40 text-primary font-mono text-xs"
+                            >
+                              {member.department}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
 
                       {/* Skills */}
                       {member.skills && member.skills.length > 0 && (
-                        <div className="flex flex-wrap justify-center gap-1 mb-3">
-                          {member.skills.slice(0, 2).map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant="outline"
-                              className={`${colors.border} ${colors.text} font-mono text-xs`}
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
+                        <>
+                          <div className="w-full h-px bg-primary/20 my-2" />
+                          <div className="flex flex-wrap justify-center gap-1 mb-3">
+                            {member.skills.slice(0, 2).map((skill) => (
+                              <Badge
+                                key={skill}
+                                variant="outline"
+                                className={`${colors.border} ${colors.text} font-mono text-xs`}
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </>
                       )}
 
                       {/* Social Links */}

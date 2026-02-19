@@ -27,14 +27,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userId)
-        .single();
+        .eq("user_id", userId);
 
       if (error) {
         console.error("Error fetching role:", error);
         return null;
       }
-      return data?.role as AppRole;
+      if (!data || data.length === 0) return null;
+      const roles = data.map((r) => r.role) as AppRole[];
+      if (roles.includes("admin")) return "admin";
+      return roles[0] || null;
     } catch (err) {
       console.error("Error in fetchUserRole:", err);
       return null;
