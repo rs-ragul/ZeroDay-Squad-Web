@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Shield, Terminal, LogOut, User, Crown } from "lucide-react";
+import { Menu, X, Terminal, LogOut, User, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,7 +36,11 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
-              <Shield className="w-8 h-8 text-primary group-hover:animate-pulse-glow transition-all duration-300" />
+              <img
+                src="/logo.png"
+                alt="ZeroDay Squad logo"
+                className="w-9 h-9 object-contain group-hover:animate-pulse-glow transition-all duration-300"
+              />
               <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <span className="font-display text-lg font-bold text-primary cyber-text-glow">
