@@ -88,32 +88,31 @@ export function AdminMembersPanel() {
 
     setIsLoading2(true);
     try {
-      // Create user via Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email: newMember.email,
-        password: newMember.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            username: newMember.email.split("@")[0],
-          },
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("No active session");
+      }
+
+      const response = await supabase.functions.invoke("create-user", {
+        body: {
+          email: newMember.email,
+          password: newMember.password,
+          role: newMember.role,
+          department: newMember.department,
+          team_role: newMember.team_role,
+          callingUserId: session.user.id,
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
-      if (error) throw error;
+      if (response.error) {
+        throw new Error(response.error.message || "Failed to create user");
+      }
 
-      if (data.user) {
-        await setUserRole(data.user.id, newMember.role);
-
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            department: newMember.department || null,
-            team_role: newMember.team_role || null,
-          })
-          .eq("user_id", data.user.id);
-
-        if (profileError) throw profileError;
+      if (response.data?.error) {
+        throw new Error(response.data.error);
       }
 
       toast({

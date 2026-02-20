@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { CyberCard } from "@/components/cyber/CyberCard";
 import { GlitchText } from "@/components/cyber/GlitchText";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
@@ -26,6 +27,8 @@ interface Profile {
   email: string | null;
   avatar_url: string | null;
   full_name: string | null;
+  department: string | null;
+  team_role: string | null;
 }
 
 export default function MemberDashboard() {
@@ -50,7 +53,7 @@ export default function MemberDashboard() {
 
       const { data } = await supabase
         .from("profiles")
-        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url")
+        .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role")
         .eq("user_id", user.id)
         .single();
 
@@ -73,7 +76,7 @@ export default function MemberDashboard() {
     if (!user) return;
     const { data } = await supabase
       .from("profiles")
-      .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url")
+      .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role")
       .eq("user_id", user.id)
       .single();
     if (data) {
@@ -147,6 +150,26 @@ export default function MemberDashboard() {
                 <p className="text-muted-foreground font-mono text-sm mb-2">
                   {user.email}
                 </p>
+                {(profile?.team_role || profile?.department) && (
+                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-2">
+                    {profile?.team_role && (
+                      <Badge
+                        variant="outline"
+                        className="border-destructive/60 text-destructive bg-destructive/10 font-mono text-xs"
+                      >
+                        {profile.team_role}
+                      </Badge>
+                    )}
+                    {profile?.department && (
+                      <Badge
+                        variant="outline"
+                        className="border-primary/40 text-primary font-mono text-xs"
+                      >
+                        {profile.department}
+                      </Badge>
+                    )}
+                  </div>
+                )}
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-mono">
                   <Shield className="w-4 h-4" />
                   MEMBER

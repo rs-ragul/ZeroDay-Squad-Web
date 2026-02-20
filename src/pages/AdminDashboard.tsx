@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { CyberCard } from "@/components/cyber/CyberCard";
 import { GlitchText } from "@/components/cyber/GlitchText";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminMembersPanel } from "@/components/admin/AdminMembersPanel";
 import { AdminProjectsPanel } from "@/components/admin/AdminProjectsPanel";
@@ -21,16 +24,40 @@ import {
   Edit,
 } from "lucide-react";
 
+interface Profile {
+  id: string;
+  username: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  full_name: string | null;
+  department: string | null;
+  team_role: string | null;
+}
+
 export default function AdminDashboard() {
   const { user, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     if (!loading && (!user || role !== "admin")) {
       navigate("/auth");
     }
   }, [user, role, loading, navigate]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("id,user_id,username,full_name,avatar_url,department,team_role,email")
+        .eq("user_id", user.id)
+        .single();
+      if (data) setProfile(data as Profile);
+    };
+    if (user) fetchProfile();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -89,6 +116,62 @@ export default function AdminDashboard() {
               </Button>
             </div>
           </div>
+
+          {/* Admin Profile Card */}
+          <CyberCard variant="glow" className="p-6 mb-8">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-20 h-20 rounded-full border-2 border-primary overflow-hidden flex items-center justify-center bg-primary/10">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Crown className="w-10 h-10 text-yellow-500" />
+                )}
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="font-display font-bold text-xl text-foreground mb-1">
+                  {profile?.full_name || profile?.username || "Admin"}
+                </h3>
+                <p className="text-muted-foreground font-mono text-sm mb-2">
+                  {user?.email}
+                </p>
+                {(profile?.team_role || profile?.department) && (
+                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-2">
+                    {profile?.team_role && (
+                      <Badge
+                        variant="outline"
+                        className="border-destructive/60 text-destructive bg-destructive/10 font-mono text-xs"
+                      >
+                        {profile.team_role}
+                      </Badge>
+                    )}
+                    {profile?.department && (
+                      <Badge
+                        variant="outline"
+                        className="border-primary/40 text-primary font-mono text-xs"
+                      >
+                        {profile.department}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 text-secondary text-sm font-mono">
+                  <Crown className="w-4 h-4 text-yellow-500" />
+                  ADMIN
+                </div>
+              </div>
+              <Button
+                variant="cyber"
+                onClick={() => setIsProfileEditOpen(true)}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Profile
+              </Button>
+            </div>
+          </CyberCard>
 
           {/* Tabs for management */}
           <Tabs defaultValue="members" className="w-full">
